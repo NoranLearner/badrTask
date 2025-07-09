@@ -13,8 +13,57 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::with('parent')->get();
-        return view('back.categories.all', compact('categories'));
+
+        // For Pagination
+
+        // Page Number
+        // الصفحه اللى احنا فيها دلوقتى
+        /* if(isset($_GET['page'])){
+            $page = (int) $_GET['page'];
+        }else{
+            $page = 1;
+        } */
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+
+        // Total Count
+        // عدد الصفوف اللى عندنا فى الجدول
+        $allCategories = Category::all();
+        $allCategoriesNumber = $allCategories->count();
+
+        // Page Limit
+        // عدد الصفوف اللى فى الجدول فى كل صفحه
+        $pageLimit = 3;
+
+        // Number Of Pages
+        // عدد الصفحات اللى عندنا
+        $pagesNum = ceil($allCategoriesNumber / $pageLimit);
+
+        // Offset
+        $offset = ($page - 1) * $pageLimit;
+
+        // Page Validation
+        $val = $this->validatePage($page, $pagesNum);
+        // @dd($val); // false
+        if ($val == false) {
+            return redirect()->route('categories.index');
+        }
+
+
+        // Get All Categories With Parent Relation
+        // $categories = Category::with('parent')->get();
+        $categories = Category::with('parent')->take($pageLimit)->offset($offset)->get();
+
+        return view('back.categories.all', compact('categories', 'page', 'allCategoriesNumber', 'pagesNum', 'offset'));
+    }
+
+    public function validatePage($page, $pagesNum)
+    {
+        if ($page >= 1 and $page <= $pagesNum) {
+            return true;
+        } else {
+            return false;
+        }
+        // return ($page >= 1 and $page <= $pagesNum);
     }
 
     /**

@@ -51,7 +51,8 @@
 
                                         <section class="hk-sec-wrapper">
 
-                                            <a href="{{ route('categories.create') }}" class="btn btn-outline-success mb-4">Add New Category</a>
+                                            <a href="{{ route('categories.create') }}"
+                                                class="btn btn-outline-success mb-4">Add New Category</a>
 
                                             <div class="row">
                                                 <div class="col-sm">
@@ -70,9 +71,11 @@
                                                                 <tbody>
                                                                     @foreach ($categories as $category)
                                                                         <tr>
-                                                                            <td>{{ $category->id }}</td>
+                                                                            {{-- <td>{{ $category->id }}</td> --}}
+                                                                            <td>{{ ++$offset }}</td>
                                                                             <td>{{ $category->name }}</td>
-                                                                            <td>{{ $category->parent->name ?? 'Main Category' }}</td>
+                                                                            <td>{{ $category->parent->name ?? 'Main Category' }}
+                                                                            </td>
                                                                             <td>
                                                                                 <a href="{{ route('categories.edit', $category->id) }}"
                                                                                     class="mr-25" data-toggle="tooltip"
@@ -100,6 +103,28 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            {{-- Start Bootstrap Pagination --}}
+                                            <div class="mt-3 d-flex justify-content-center">
+                                                <nav aria-label="Page navigation example">
+                                                    <ul class="pagination">
+                                                        <li class="page-item  <?php if($page == 1) echo "disabled"; ?> ">
+                                                            <a class="page-link" href="<?= $_SERVER['PHP_SELF'] . "?page=" . ($page-1) ?>">Previous</a>
+                                                        </li>
+                                                        @for ($i = 1; $i <= $pagesNum; $i++)
+                                                            <li class="page-item">
+                                                                <a class="page-link"
+                                                                    href="<?= $_SERVER['PHP_SELF'] . "?page=" . $i ?>">{{ $i }}</a>
+                                                            </li>
+                                                        @endfor
+                                                        <li class="page-item  <?php if($page == $pagesNum) echo "disabled"; ?> ">
+                                                            <a class="page-link" href="<?= $_SERVER['PHP_SELF'] . "?page=" . ($page+1) ?>">Next</a>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                            {{-- End Bootstrap Pagination --}}
+
                                         </section>
 
                                         {{-- End Category Table --}}
