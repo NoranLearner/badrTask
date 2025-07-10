@@ -22,4 +22,7 @@ Route::get('/', function () {
     return view('back/index');
 });
 
+Route::delete('/categories/delete-selected', [CategoryController::class, 'deleteCheckedCategories'])->name('category.deleteSelected');
+
 Route::resource('categories', CategoryController::class);
+

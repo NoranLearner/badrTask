@@ -54,6 +54,9 @@
                                             <a href="{{ route('categories.create') }}"
                                                 class="btn btn-outline-success mb-4">Add New Category</a>
 
+                                            <a href="#" class="btn btn-outline-danger mb-4"
+                                                id="deleteAllSelectedRecord">Delete Selected</a>
+
                                             <div class="row">
                                                 <div class="col-sm">
                                                     <div class="table-wrap">
@@ -62,6 +65,9 @@
                                                                 class="table table-hover table-bordered table-striped mb-0">
                                                                 <thead>
                                                                     <tr>
+                                                                        <th>
+                                                                            <input type="checkbox" id="chkCheckAll" />
+                                                                        </th>
                                                                         <th>#</th>
                                                                         <th>Category Name</th>
                                                                         <th>Category Parent</th>
@@ -70,7 +76,12 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     @foreach ($categories as $category)
-                                                                        <tr>
+                                                                        <tr id="sid{{$category->id}}">
+                                                                            <td>
+                                                                                <input type="checkbox" name="ids"
+                                                                                    class="checkBoxClass"
+                                                                                    value="{{ $category->id }}" />
+                                                                            </td>
                                                                             {{-- <td>{{ $category->id }}</td> --}}
                                                                             <td>{{ ++$offset }}</td>
                                                                             <td>{{ $category->name }}</td>
@@ -108,8 +119,10 @@
                                             <div class="mt-3 d-flex justify-content-center">
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination">
-                                                        <li class="page-item  <?php if($page == 1) echo "disabled"; ?> ">
-                                                            <a class="page-link" href="<?= $_SERVER['PHP_SELF'] . "?page=" . ($page-1) ?>">Previous</a>
+                                                        <li class="page-item  <?php if ($page == 1)
+        echo "disabled"; ?> ">
+                                                            <a class="page-link"
+                                                                href="<?= $_SERVER['PHP_SELF'] . "?page=" . ($page - 1) ?>">Previous</a>
                                                         </li>
                                                         @for ($i = 1; $i <= $pagesNum; $i++)
                                                             <li class="page-item">
@@ -117,8 +130,10 @@
                                                                     href="<?= $_SERVER['PHP_SELF'] . "?page=" . $i ?>">{{ $i }}</a>
                                                             </li>
                                                         @endfor
-                                                        <li class="page-item  <?php if($page == $pagesNum) echo "disabled"; ?> ">
-                                                            <a class="page-link" href="<?= $_SERVER['PHP_SELF'] . "?page=" . ($page+1) ?>">Next</a>
+                                                        <li class="page-item  <?php if ($page == $pagesNum)
+        echo "disabled"; ?> ">
+                                                            <a class="page-link"
+                                                                href="<?= $_SERVER['PHP_SELF'] . "?page=" . ($page + 1) ?>">Next</a>
                                                         </li>
                                                     </ul>
                                                 </nav>
@@ -167,5 +182,51 @@
 
     </div>
     <!-- /Main Content -->
+
+@endsection
+
+@section('script')
+
+    <script type="text/javascript">
+
+        $(function (e) {
+            $("#chkCheckAll").click(function () {
+                $(".checkBoxClass").prop('checked', $(this).prop('checked'));
+            });
+        });
+
+        $("#deleteAllSelectedRecord").click(function (e) {
+
+            e.preventDefault();
+
+            var allids = [];
+
+            $("input:checkbox[name=ids]:checked").each(function () {
+                allids.push($(this).val());
+            });
+
+            $.ajax({
+                url: "{{ route('category.deleteSelected') }}",
+                type: "POST",
+                data: {
+                    _token: $("input[name=_token]").val(),
+                    _method: 'DELETE',
+                    ids: allids
+                },
+                success: function (response) {
+                    $.each(allids, function (key, val) {
+                        // table row id in tbody
+                        $("#sid" + val).remove();
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Status:", xhr.status);
+                    console.error("Message:", xhr.responseText);
+                }
+            });
+
+        });
+
+    </script>
 
 @endsection

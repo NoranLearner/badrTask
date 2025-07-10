@@ -84,7 +84,9 @@
 <script src="{{ asset('assets/back/dist/js/init.js') }}"></script>
 <script src="{{ asset('assets/back/dist/js/dashboard-data.js') }}"></script>
 
-@stack('scripts')
+{{-- @stack('scripts') --}}
+
+@yield('script')
 
 </body>
 

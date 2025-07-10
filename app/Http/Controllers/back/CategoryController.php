@@ -144,4 +144,22 @@ class CategoryController extends Controller
 
         return redirect()->route('categories.index');
     }
+
+    public function deleteCheckedCategories(Request $request)
+    {
+        $ids = $request->ids;
+
+        $categories = Category::whereIn('id', $ids)->get();
+
+        foreach ($categories as $category) {
+            $category->children()->update(['parent_cat_id' => null]);
+        }
+
+        Category::whereIn('id', $ids)->delete();
+
+        // return response()->json(['success'=>"categories have been deleted!"]);
+        // return response()->json(['success' => "تم حذف التصنيفات المحددة بنجاح."]);
+        return redirect()->route('categories.index');
+    }
+
 }
