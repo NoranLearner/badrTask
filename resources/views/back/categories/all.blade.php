@@ -46,6 +46,11 @@
                                                 </span>
                                                 All Categories
                                             </h4>
+
+                                            <a href="{{ route('category_tree') }}" class="btn btn-secondary btn-sm btn-icon btn-icon-style-1" data-toggle="tooltip" data-original-title="Category Tree">
+                                                <span class="material-icons btn-icon-wrap" style="font-size: 18px">device_hub</span>
+                                            </a>
+
                                         </div>
                                         <!-- /Title -->
 

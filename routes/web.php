@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\back\CategoryController;
+use App\Models\Category;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,8 +20,12 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('/', function () {
-    return view('back/index');
+    return view('back.index');
 });
+
+Route::get('/categories/tree', function () {
+    return view('back.categories.tree', ['categories'=>Category::tree()]);
+})->name('category_tree');
 
 Route::delete('/categories/delete-selected', [CategoryController::class, 'deleteCheckedCategories'])->name('category.deleteSelected');
 
