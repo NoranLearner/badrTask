@@ -11,7 +11,7 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
 
         // For Pagination
@@ -34,12 +34,27 @@ class CategoryController extends Controller
         // عدد الصفوف اللى فى الجدول فى كل صفحه
         $pageLimit = 3;
 
+        // Offset
+        $offset = ($page - 1) * $pageLimit;
+
+        // Get All Categories With Parent Relation
+        // $categories = Category::with('parent')->get();
+        $categories = Category::with('parent')->take($pageLimit)->offset($offset)->get();
+
+        $search = null;
+
+        // For Search
+        if ($request->search != null) {
+            // @dd($request);
+            $search = $request->search;
+            $categories = Category::where('name', 'LIKE', '%' . $search . '%')->with('parent')->take($pageLimit)->offset($offset)->get();
+            $allCategoriesNumber = Category::where('name', 'LIKE', '%' . $search . '%')->count();
+            // @dd($allCategoriesNumber); // 4
+        }
+
         // Number Of Pages
         // عدد الصفحات اللى عندنا
         $pagesNum = ceil($allCategoriesNumber / $pageLimit);
-
-        // Offset
-        $offset = ($page - 1) * $pageLimit;
 
         // Page Validation
         $val = $this->validatePage($page, $pagesNum);
@@ -48,12 +63,7 @@ class CategoryController extends Controller
             return redirect()->route('categories.index');
         }
 
-
-        // Get All Categories With Parent Relation
-        // $categories = Category::with('parent')->get();
-        $categories = Category::with('parent')->take($pageLimit)->offset($offset)->get();
-
-        return view('back.categories.all', compact('categories', 'page', 'allCategoriesNumber', 'pagesNum', 'offset'));
+        return view('back.categories.all', compact('categories', 'page', 'allCategoriesNumber', 'pagesNum', 'offset', 'search'));
     }
 
     public function validatePage($page, $pagesNum)
@@ -65,6 +75,26 @@ class CategoryController extends Controller
         }
         // return ($page >= 1 and $page <= $pagesNum);
     }
+
+    // public function searchCategory(Request $request)
+    // {
+    //     // @dd($request);
+    //     $search = $request->search;
+    //     $categories = Category::where('name', 'LIKE', '%' . $search . '%')->get();
+    //     $allCategoriesNumber = $categories->count();
+    //     // @dd($allCategoriesNumber); // 4
+    //     $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+    //     $pageLimit = 3;
+    //     $pagesNum = ceil($allCategoriesNumber / $pageLimit);
+    //     // @dd($pagesNum); // 2
+    //     $offset = ($page - 1) * $pageLimit;
+    //     // Page Validation
+    //     $val = $this->validatePage($page, $pagesNum);
+    //     if ($val == false) {
+    //         return redirect()->route('categories.index');
+    //     }
+    //     return view('back.categories.all', compact('categories', 'page', 'allCategoriesNumber', 'pagesNum', 'offset'));
+    // }
 
     /**
      * Show the form for creating a new resource.

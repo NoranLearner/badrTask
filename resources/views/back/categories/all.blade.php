@@ -30,7 +30,7 @@
                                         <!-- Breadcrumb -->
                                         <nav class="hk-breadcrumb" aria-label="breadcrumb">
                                             <ol class="breadcrumb breadcrumb-light bg-transparent">
-                                                <li class="breadcrumb-item"><a href="#">Categories</a></li>
+                                                <li class="breadcrumb-item"><a href="{{ url('categories') }}">Categories</a></li>
                                                 <li class="breadcrumb-item active" aria-current="page">Show Categories</li>
                                             </ol>
                                         </nav>
@@ -51,11 +51,25 @@
 
                                         <section class="hk-sec-wrapper">
 
-                                            <a href="{{ route('categories.create') }}"
-                                                class="btn btn-outline-success mb-4">Add New Category</a>
-
-                                            <a href="#" class="btn btn-outline-danger mb-4"
-                                                id="deleteAllSelectedRecord">Delete Selected</a>
+                                            <div class="row mb-4">
+                                                <div class="col-md-6">
+                                                    <a href="{{ route('categories.create') }}" class="btn btn-outline-success">Add New Category</a>
+                                                    <a href="#" class="btn btn-outline-danger" id="deleteAllSelectedRecord">Delete Selected</a>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    {{-- action="{{ url('search-category') }}" --}}
+                                                    <form method="GET">
+                                                        <div class="input-group">
+                                                            <input type="search" name="search" class="form-control"
+                                                                placeholder="Type Here" aria-label="search"
+                                                                aria-describedby="button-addon2"
+                                                                @isset($search) value="{{ $search }}" @endisset>
+                                                            <button type="submit" class="btn btn-outline-info"
+                                                                id="button-addon2">Search</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
 
                                             <div class="row">
                                                 <div class="col-sm">
@@ -119,21 +133,17 @@
                                             <div class="mt-3 d-flex justify-content-center">
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination">
-                                                        <li class="page-item  <?php if ($page == 1)
-        echo "disabled"; ?> ">
-                                                            <a class="page-link"
-                                                                href="<?= $_SERVER['PHP_SELF'] . "?page=" . ($page - 1) ?>">Previous</a>
+                                                        <li class="page-item  <?php if ($page == 1) echo "disabled"; ?> ">
+                                                            <a class="page-link" href="<?= $_SERVER['PHP_SELF'] . "?search=" . $search . "&page=" . ($page - 1) ?>">Previous</a>
                                                         </li>
                                                         @for ($i = 1; $i <= $pagesNum; $i++)
-                                                            <li class="page-item">
-                                                                <a class="page-link"
-                                                                    href="<?= $_SERVER['PHP_SELF'] . "?page=" . $i ?>">{{ $i }}</a>
+                                                            <li class="page-item  {{ $page == $i ? 'active' : '' }}">
+                                                                <a class="page-link" href="<?= $_SERVER['PHP_SELF'] . "?search=" . $search . "&page=" . $i ?>">{{ $i }}</a>
+                                                                {{-- <a class="page-link" href="{{ url('categories') }}?search={{ request('search') }}&page={{ $i }}">{{ $i }}</a> --}}
                                                             </li>
                                                         @endfor
-                                                        <li class="page-item  <?php if ($page == $pagesNum)
-        echo "disabled"; ?> ">
-                                                            <a class="page-link"
-                                                                href="<?= $_SERVER['PHP_SELF'] . "?page=" . ($page + 1) ?>">Next</a>
+                                                        <li class="page-item  <?php if ($page == $pagesNum) echo "disabled"; ?> ">
+                                                            <a class="page-link" href="<?= $_SERVER['PHP_SELF'] . "?search=" . $search . "&page=" . ($page + 1) ?>">Next</a>
                                                         </li>
                                                     </ul>
                                                 </nav>

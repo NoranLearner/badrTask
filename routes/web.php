@@ -24,5 +24,7 @@ Route::get('/', function () {
 
 Route::delete('/categories/delete-selected', [CategoryController::class, 'deleteCheckedCategories'])->name('category.deleteSelected');
 
+// Route::get('search-category',[CategoryController::class, 'searchCategory']);
+
 Route::resource('categories', CategoryController::class);
 
